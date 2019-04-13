@@ -1,0 +1,7 @@
+#!/usr/bin/execlineb -P
+with-contenv
+fdmove -c 2 1
+importas -D 022 -s umaskSet UMASK_SET
+importas -D 8080 -s webuiPort WEBUI_PORT
+umask ${umaskSet}
+s6-setuidgid abc /usr/bin/qbittorrent-nox --webui-port=${webuiPort}

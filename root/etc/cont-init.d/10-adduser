@@ -1,0 +1,15 @@
+#!/usr/bin/with-contenv bash
+
+PUID=${PUID:-911}
+PGID=${PGID:-911}
+
+usermod -o -u "$PUID" abc
+groupmod -o -g "$PGID" abc
+
+echo "-------------------------------------
+GID/UID
+-------------------------------------
+User home:   $(echo ~abc)
+User uid:    $(id -u abc)
+User gid:    $(id -g abc)
+-------------------------------------"
