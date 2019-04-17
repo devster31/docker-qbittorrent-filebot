@@ -10,7 +10,10 @@ ARG S6_OVERLAY_ARCH="amd64"
 # environment settings
 ENV HOME="/config" \
 	XDG_CONFIG_HOME="/config" \
-	XDG_DATA_HOME="/config"
+	XDG_DATA_HOME="/config" \
+    QBITTORRENT_VERSION="${QBITTORRENT_VERSION}" \
+    FILEBOT_VERSION="${FILEBOT_VERSION}" \
+    S6_OVERLAY_VERSION="${S6_OVERLAY_VERSION}"
 
 # add repo and install qbitorrent
 RUN DEBIAN_FRONTEND=noninteractive \
