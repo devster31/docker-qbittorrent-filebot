@@ -28,13 +28,21 @@ RUN DEBIAN_FRONTEND=noninteractive \
         jq \
         libchromaprint-tools \
         libjna-jni \
-        libmediainfo0v5 \
         openjdk-11-jre-headless \
         p7zip-full \
         p7zip-rar \
         software-properties-common \
         unzip \
         xz-utils \
+    && \
+    echo "***** add mediainfo repositories ****" && \
+    cd /tmp && \
+    curl -sSL -OJ https://mediaarea.net/repo/deb/repo-mediaarea_1.0-12_all.deb && \
+    dpkg -i repo-mediaarea_1.0-12_all.deb && \
+    echo "***** install mediainfo ****" && \
+    apt-get update -q && \
+    apt-get install -q -y --no-install-recommends \
+        libmediainfo0v5 \
     && \
 	echo "***** add qbitorrent repositories ****" && \
 	apt-key adv --keyserver hkp://keyserver.ubuntu.com:11371 --recv-keys 7CA69FC4 && \
