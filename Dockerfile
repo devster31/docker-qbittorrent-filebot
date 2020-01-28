@@ -63,7 +63,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update -q && \
     echo "**** install FileBot package ****" && \
     DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y --no-install-recommends \
+    apt-get install -q -y --no-install-recommends \
         filebot="${FILEBOT_VERSION}" \
     && \
     echo "**** cleanup ****" && \
