@@ -16,20 +16,6 @@ platform:
   arch: amd64
 
 steps:
-# - name: build
-#   image: plugins/docker
-#   settings:
-#     auto_tag: true
-#     build_args_from_env:
-#     - QBITTORRENT_VERSION
-#     - FILEBOT_VERSION
-#     - S6_OVERLAY_VERSION
-#     repo: devster31/qbittorrent-filebot
-#     username:
-#       from_secret: docker_username
-#     password:
-#       from_secret: docker_password
-
 - name: build
   commands:
   - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
