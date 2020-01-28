@@ -1,6 +1,15 @@
 ---
 kind: pipeline
-name: linux-amd64-qBittorrent
+type: digitalocean
+name: default
+
+token:
+  from_secret: token
+
+server:
+  image: docker-18-04
+  size: s-1vcpu-2gb
+  region: lon1
 
 platform:
   os: linux
