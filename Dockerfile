@@ -1,7 +1,7 @@
 FROM ubuntu:bionic
 
 # version args
-ARG QBITTORRENT_VERSION="4.1.*"
+ARG QBITTORRENT_VERSION="4.2.*"
 ARG FILEBOT_VERSION="4.8.*"
 # version args for s6 overlay
 ARG S6_OVERLAY_VERSION="v1.22.1.0"
