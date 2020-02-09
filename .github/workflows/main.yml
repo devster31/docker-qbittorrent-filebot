@@ -1,0 +1,76 @@
+---
+name: docker build
+on:
+  - push
+  - repository_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Docker
+        uses: docker-practice/actions-setup-docker@0.0.1
+        with:
+          docker_version: 19.03
+          docker_channel: stable
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y -q awk sed
+
+      - name: Version check
+        shell: bash
+        run: |
+          S6_URL=https://api.github.com/repos/just-containers/s6-overlay/releases/latest
+          RESP=$(curl -Ls -w "%{http_code}" -o /dev/null "${S6_URL}")
+          if [ "${RESP}" == 200 ]; then
+            S6_VER=$(curl -sS "${S6_URL}" | jq --raw-output '.tag_name')
+          else
+            echo "::error ::Unable to get the URL:${S6_URL}"
+            exit 1
+          fi
+
+          FB_DEB_URL="https://get.filebot.net/deb/dists/stable/main/binary-amd64/Packages"
+          RESP=$(curl -Ls -w "%{http_code}" -o /dev/null "${FB_DEB_URL}")
+          if [ "${RESP}" == 200 ]; then
+            FB_VER=$(curl -sSX GET "${FB_DEB_URL}" | awk -F ': ' '/Version/{print $2;exit}')
+          else
+            echo "::error ::Unable to get the URL:${QB_DEB_URL}"
+            exit 1
+          fi
+
+          QB_DEB_URL=http://ppa.launchpad.net/qbittorrent-team/qbittorrent-stable/ubuntu/dists/bionic/main/binary-amd64/Packages.gz
+          QB_PKG=qbittorrent-nox
+          RESP=$(curl -Ls -w "%{http_code}" -o /dev/null "${QB_DEB_URL}")
+          if [ "${RESP}" == 200 ]; then
+            QB_VER=$(curl -sSX GET "${QB_DEB_URL}" | gunzip -c | \
+              awk -F ': ' "/Package: ${QB_PKG}/,/Version/{ y = \$0 } END { split(y, a) ; print a[2] }")
+          else
+            echo "::error ::Unable to get the URL:${QB_DEB_URL}"
+            exit 1
+          fi
+
+          SHORT_TAG=q$(echo "${QB_VER}" | awk -F '[:~]' '{ print $2 }')-f"${FB_VER}"
+          FULL_TAG=q$(echo "${QB_VER}" | awk -F '[:~]' '{ print $2 }')-f"${FB_VER}"
+
+          echo "::set-output name=short_tagn::${SHORT_TAG}"
+          echo "::set-output name=full_tag::${FULL_TAG}"
+          echo "::set-output name=s6_version::${S6_VER}"
+          echo "::set-output name=fb_version::${FB_VER}"
+          echo "::set-output name=qb_version::${QB_VER}"
+        id: version_check
+
+      - name: Build
+        if: success()
+        run: |
+          echo ${{ secrets.docker_hub_password }} | docker login --username ${{ secrets.docker_hub_username }} --password-stdin
+          docker build . \
+            --build-arg S6_OVERLAY_VERSION="${{ steps.version_check.outputs.s6_version }}" \
+            --build-arg FILEBOT_VERSION="${{ steps.version_check.outputs.fb_version }}" \
+            --build-arg QBITTORRENT_VERSION="${{ steps.version_check.outputs.qb_version }}" \
+            --tag devster31/qbittorrent-filebot:latest
+            --tag devster31/qbittorrent-filebot:"${{ steps.version_check.outputs.short_tag }}"
+            --tag devster31/qbittorrent-filebot:"${{ steps.version_check.outputs.full_tag }}"
+          docker push devster31/qbittorrent-filebot
+...

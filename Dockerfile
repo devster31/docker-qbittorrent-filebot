@@ -1,19 +1,19 @@
 FROM ubuntu:bionic
 
 # version args
-ARG QBITTORRENT_VERSION="1:4.2.*"
-ARG FILEBOT_VERSION="4.8.*"
+ARG QBITTORRENT_VER
+ARG FILEBOT_VER
 # version args for s6 overlay
-ARG S6_OVERLAY_VERSION="v1.22.1.0"
+ARG S6_OVERLAY_VER
 ARG S6_OVERLAY_ARCH="amd64"
 
 # environment settings
 ENV HOME="/config" \
     XDG_CONFIG_HOME="/config" \
     XDG_DATA_HOME="/config" \
-    QBITTORRENT_VERSION="${QBITTORRENT_VERSION}" \
-    FILEBOT_VERSION="${FILEBOT_VERSION}" \
-    S6_OVERLAY_VERSION="${S6_OVERLAY_VERSION}"
+    QBITTORRENT_VER="${QBITTORRENT_VER}" \
+    FILEBOT_VER="${FILEBOT_VER}" \
+    S6_OVERLAY_VER="${S6_OVERLAY_VER}"
 
 # add repo and install qbitorrent
 RUN DEBIAN_FRONTEND=noninteractive \
@@ -51,7 +51,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     echo "**** install qBittorrent ****" && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -q -y --no-install-recommends \
-        qbittorrent-nox="${QBITTORRENT_VERSION}" \
+        qbittorrent-nox="${QBITTORRENT_VER}" \
     && \
     echo "**** add FileBot repository ****" && \
     apt-key adv --fetch-keys https://raw.githubusercontent.com/filebot/plugins/master/gpg/maintainer.pub && \
@@ -60,7 +60,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     echo "**** install FileBot package ****" && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -q -y --no-install-recommends \
-        filebot="${FILEBOT_VERSION}" \
+        filebot="${FILEBOT_VER}" \
     && \
     echo "**** cleanup ****" && \
     apt-get -y autoremove && \
@@ -74,7 +74,7 @@ RUN \
     echo "**** add s6 overlay ****" && \
     curl -sSL -o \
         /tmp/s6-overlay.tar.gz \
-            "https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCH}.tar.gz" && \
+            "https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VER}/s6-overlay-${S6_OVERLAY_ARCH}.tar.gz" && \
     tar -xzvf \
         /tmp/s6-overlay.tar.gz -C / && \
     echo "**** create abc user ****" && \
