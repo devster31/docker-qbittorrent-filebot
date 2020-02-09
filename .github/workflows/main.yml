@@ -15,10 +15,6 @@ jobs:
           docker_version: 19.03
           docker_channel: stable
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -y -q gawk sed
-
       - name: Version check
         shell: bash
         run: |
