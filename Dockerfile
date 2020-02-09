@@ -32,6 +32,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
         p7zip-full \
         p7zip-rar \
         software-properties-common \
+        unrar \
         unzip \
         xz-utils \
     && \
@@ -48,14 +49,9 @@ RUN DEBIAN_FRONTEND=noninteractive \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:11371 --recv-keys 7CA69FC4 && \
     apt-add-repository -y -u ppa:qbittorrent-team/qbittorrent-stable && \
     echo "**** install qBittorrent ****" && \
-    # if [ -z ${QBITTORRENT_VERSION+x} ]; then \
-    # 	QBITTORRENT_VERSION=$(curl -sX GET http://ppa.launchpad.net/qbittorrent-team/qbittorrent-stable/ubuntu/dists/bionic/main/binary-amd64/Packages.gz | gunzip -c \
-    # 	| grep -A 7 -m 1 "Package: qbittorrent-nox" | awk -F ": " '/Version/{print $2;exit}');\
-    # fi && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -q -y --no-install-recommends \
         qbittorrent-nox="${QBITTORRENT_VERSION}" \
-        unrar \
     && \
     echo "**** add FileBot repository ****" && \
     apt-key adv --fetch-keys https://raw.githubusercontent.com/filebot/plugins/master/gpg/maintainer.pub && \
