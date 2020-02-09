@@ -50,7 +50,7 @@ jobs:
           SHORT_TAG=q$(echo "${QB_VER}" | awk -F '[:~]' '{ print $2 }')-f"${FB_VER}"
           FULL_TAG=q$(echo "${QB_VER}" | awk -F '[:~]' '{ print $2 }')-f"${FB_VER}"
 
-          echo "::set-output name=short_tagn::${SHORT_TAG}"
+          echo "::set-output name=short_tag::${SHORT_TAG}"
           echo "::set-output name=full_tag::${FULL_TAG}"
           echo "::set-output name=s6_version::${S6_VER}"
           echo "::set-output name=fb_version::${FB_VER}"
