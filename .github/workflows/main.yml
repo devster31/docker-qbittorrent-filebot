@@ -62,9 +62,9 @@ jobs:
         run: |
           echo ${{ secrets.docker_hub_password }} | docker login --username ${{ secrets.docker_hub_username }} --password-stdin
           docker build . \
-            --build-arg S6_OVERLAY_VERSION="${{ steps.version_check.outputs.s6_version }}" \
-            --build-arg FILEBOT_VERSION="${{ steps.version_check.outputs.fb_version }}" \
-            --build-arg QBITTORRENT_VERSION="${{ steps.version_check.outputs.qb_version }}" \
+            --build-arg S6_OVERLAY_VER="${{ steps.version_check.outputs.s6_version }}" \
+            --build-arg FILEBOT_VER="${{ steps.version_check.outputs.fb_version }}" \
+            --build-arg QBITTORRENT_VER="${{ steps.version_check.outputs.qb_version }}" \
             --tag devster31/qbittorrent-filebot:latest \
             --tag devster31/qbittorrent-filebot:"${{ steps.version_check.outputs.short_tag }}" \
             --tag devster31/qbittorrent-filebot:"${{ steps.version_check.outputs.full_tag }}"
