@@ -47,7 +47,7 @@ jobs:
             exit 1
           fi
 
-          SHORT_TAG=q$(echo "${QB_VER}" | awk -F '[:~]' '{ print $2 }')-f"${FB_VER}"
+          SHORT_TAG=$(echo "${QB_VER}" | awk -F '[:~]' '{ print $2 }')"
           FULL_TAG=q$(echo "${QB_VER}" | awk -F '[:~]' '{ print $2 }')-f"${FB_VER}"
 
           echo "::set-output name=short_tag::${SHORT_TAG}"
