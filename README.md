@@ -1,7 +1,6 @@
 # docker-qbittorrent-filebot
 
 [![docker build](https://github.com/devster31/docker-qbittorrent-filebot/workflows/docker%20build/badge.svg)](https://github.com/devster31/docker-qbittorrent-filebot/actions)
-[![MicroBadger](https://images.microbadger.com/badges/image/devster31/qbittorrent-filebot.svg)](https://microbadger.com/images/devster31/qbittorrent-filebot "Get your own image badge on microbadger.com")
 [![Docker Pulls](https://img.shields.io/docker/pulls/devster31/qbittorrent-filebot.svg?style=flat-square&color=E68523&label=pulls&logo=docker&logoColor=FFFFFF)](https://hub.docker.com/r/devster31/qbittorrent-filebot)
 [![Docker Stars](https://img.shields.io/docker/stars/devster31/qbittorrent-filebot.svg?style=flat-square&color=E68523&label=stars&logo=docker&logoColor=FFFFFF)](https://hub.docker.com/r/devster31/qbittorrent-filebot)
 
