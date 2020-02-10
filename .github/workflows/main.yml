@@ -1,8 +1,11 @@
 ---
 name: docker build
 on:
-  - push
-  - repository_dispatch
+  push:
+    paths:
+      - '!README.md'
+      - 'LICENSE'
+  repository_dispatch: ~
 jobs:
   build:
     runs-on: ubuntu-latest
