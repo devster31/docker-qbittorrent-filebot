@@ -1,11 +1,20 @@
 FROM ubuntu:bionic
 
 # version args
+ARG SHORT_TAG_VER
+ARG FULL_TAG_VER
 ARG QBITTORRENT_VER
 ARG FILEBOT_VER
 # version args for s6 overlay
 ARG S6_OVERLAY_VER
 ARG S6_OVERLAY_ARCH="amd64"
+
+LABEL org.opencontainers.image.version="${SHORT_TAG_VER}"
+LABEL org.opencontainers.image.tag.version="${FULL_TAG_VER}"
+LABEL org.opencontainers.image.qbittorrent.version="${QBITTORRENT_VER}"
+LABEL org.opencontainers.image.filebot.version="${FILEBOT_VER}"
+LABEL org.opencontainers.image.s6-overlay.version="${S6_OVERLAY_VER}"
+LABEL maintainer="devster31"
 
 # environment settings
 ENV HOME="/config" \
