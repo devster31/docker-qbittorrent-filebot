@@ -21,6 +21,47 @@ jobs:
       - name: Version check
         shell: bash
         run: |
+          # start of script
+          function get_token() {
+            local image=$1
+            curl -sS \
+              "https://auth.docker.io/token?scope=repository:$image:pull&service=registry.docker.io" \
+              | jq -r '.token'
+          }
+
+          function get_digest() {
+            local image=$1
+            local tag=$2
+            local token=$3
+            curl -sSL \
+              --header "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+              --header "Authorization: Bearer $token" \
+              "https://registry-1.docker.io/v2/$image/manifests/$tag" \
+              | jq -r '.config.digest'
+          }
+
+          function get_image_configuration() {
+            local image=$1
+            local token=$2
+            local digest=$3
+            curl -sSL --header "Authorization: Bearer $token" \
+              "https://registry-1.docker.io/v2/$image/blobs/$digest" \
+              | jq -r '.container_config'
+          }
+
+          function get_image_info {
+            local image="devster31/qbittorrent-filebot"
+            local token
+            token=$(get_token $image)
+            local digest
+            digest=$(get_digest "${image}" "${tag:-latest}" "${token}")
+            get_image_configuration "${image}" "${token}" "${digest}"
+          }
+
+          EXT_S6_VER=$(get_image_info | jq -r '.Labels."org.opencontainers.image.s6-overlay.version"')
+          EXT_FB_VER=$(get_image_info | jq -r '.Labels."org.opencontainers.image.filebot.version"')
+          EXT_QB_VER=$(get_image_info | jq -r '.Labels."org.opencontainers.image.qbittorrent.version"')
+
           S6_URL=https://api.github.com/repos/just-containers/s6-overlay/releases/latest
           RESP=$(curl -Ls -w "%{http_code}" -o /dev/null "${S6_URL}")
           if [ "${RESP}" == 200 ]; then
@@ -53,6 +94,14 @@ jobs:
           SHORT_TAG=$(echo "${CUR_QB_VER}" | awk -F '[:~]' '{ print $2 }')
           FULL_TAG=qbt-v$(echo "${CUR_QB_VER}" | awk -F '[:~]' '{ print $2 }')~fb-v"${CUR_FB_VER}"
 
+          if [ "${CUR_QB_VER}" != "${EXT_QB_VER}" ] || \
+             [ "${CUR_FB_VER}" != "${EXT_FB_VER}" ] || \
+             [ "${CUR_S6_VER//v}" != "${EXT_S6_VER}" ]; then
+            RUN_BUILD=yes
+          else
+            RUN_BUILD=no
+          fi
+
           echo "::set-output name=short_tag::${SHORT_TAG}"
           echo "::set-output name=full_tag::${FULL_TAG}"
           echo "::set-output name=s6_version::${CUR_S6_VER//v}"
@@ -62,7 +111,7 @@ jobs:
         id: version_check
 
       - name: Build
-        if: success()
+        if: success() && steps.version_check.outputs.trigger == "yes"
         run: |
           echo ${{ secrets.docker_hub_password }} | docker login --username ${{ secrets.docker_hub_username }} --password-stdin
           docker build . \
