@@ -2,8 +2,8 @@
 name: docker build
 on:
   push:
-    paths:
-      - '!README.md'
+    paths-ignore:
+      - 'README.md'
       - 'LICENSE'
   repository_dispatch: ~
 jobs:
@@ -111,7 +111,7 @@ jobs:
         id: version_check
 
       - name: Build
-        if: success() && steps.version_check.outputs.trigger == "yes"
+        if: success() && steps.version_check.outputs.trigger == 'yes'
         run: |
           echo ${{ secrets.docker_hub_password }} | docker login --username ${{ secrets.docker_hub_username }} --password-stdin
           docker build . \
