@@ -83,7 +83,7 @@ RUN \
     echo "**** add s6 overlay ****" && \
     curl -sSL -o \
         /tmp/s6-overlay.tar.gz \
-            "https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VER}/s6-overlay-${S6_OVERLAY_ARCH}.tar.gz" && \
+            "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VER}/s6-overlay-${S6_OVERLAY_ARCH}.tar.gz" && \
     tar -xzvf \
         /tmp/s6-overlay.tar.gz -C / && \
     echo "**** create abc user ****" && \
