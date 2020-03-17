@@ -56,7 +56,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     && \
     echo "***** add qbitorrent repositories ****" && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:11371 --recv-keys 7CA69FC4 && \
-    apt-add-repository -y -u ppa:qbittorrent-team/qbittorrent-stable && \
+    apt-add-repository -y -u "http://ppa.launchpad.net/qbittorrent-team/qbittorrent-stable/ubuntu main" && \
     echo "**** install qBittorrent ****" && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -q -y --no-install-recommends \
