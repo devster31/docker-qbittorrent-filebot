@@ -92,7 +92,7 @@ jobs:
           fi
 
           SHORT_TAG=$(echo "${CUR_QB_VER}" | awk -F '[:~]' '{ print $2 }')
-          FULL_TAG=qbt-v$(echo "${CUR_QB_VER}" | awk -F '[:~]' '{ print $2 }')~fb-v"${CUR_FB_VER}"
+          FULL_TAG=qbt-v$(echo "${CUR_QB_VER}" | awk -F '[:~]' '{ print $2 }')-fb-v"${CUR_FB_VER}"
 
           if [ "${CUR_QB_VER}" != "${EXT_QB_VER}" ] || \
              [ "${CUR_FB_VER}" != "${EXT_FB_VER}" ] || \
