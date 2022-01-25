@@ -7,7 +7,7 @@ ARG QBITTORRENT_VER
 ARG FILEBOT_VER
 # version args for s6 overlay
 ARG S6_OVERLAY_VER
-ARG S6_OVERLAY_ARCH="amd64"
+ARG S6_OVERLAY_ARCH="x86_64"
 
 LABEL org.opencontainers.image.version="${SHORT_TAG_VER}"
 LABEL org.opencontainers.image.tag.version="${FULL_TAG_VER}"
@@ -87,10 +87,15 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 RUN \
     echo "**** add s6 overlay ****" && \
     curl -sSL -o \
-        /tmp/s6-overlay.tar.gz \
-            "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VER}/s6-overlay-${S6_OVERLAY_ARCH}.tar.gz" && \
-    tar -xzvf \
-        /tmp/s6-overlay.tar.gz -C / && \
+        /tmp/s6-overlay-noarch.tar.xz \
+            "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VER}/s6-overlay-noarch-${S6_OVERLAY_VER}.tar.xz" && \
+    tar -xJpv -f \
+        /tmp/s6-overlay-noarch.tar.xz -C / && \
+    curl -sSL -o \
+        /tmp/s6-overlay.tar.xz \
+            "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VER}/s6-overlay-${S6_OVERLAY_ARCH}-${S6_OVERLAY_VER}.tar.xz" && \
+    tar -xJpv -f \
+        /tmp/s6-overlay.tar.xz -C / && \
     echo "**** create abc user ****" && \
     # add group users
     groupmod -g 100 users && \
