@@ -42,7 +42,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
         jq \
         libchromaprint-tools \
         libjna-jni \
-        openjdk-11-jre-headless \
+        default-jre-headless \
         p7zip-full \
         p7zip-rar \
         software-properties-common \
