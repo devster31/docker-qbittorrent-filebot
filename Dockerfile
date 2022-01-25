@@ -26,7 +26,11 @@ ENV HOME="/config" \
     MEDIAINFO_REPO_VER="1.0-19"
 
 # add repo and install qbitorrent
-RUN DEBIAN_FRONTEND=noninteractive \
+
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    export DEBCONF_NONINTERACTIVE_SEEN=true && \
+    echo "tzdata tzdata/Areas select Etc" | debconf-set-selections && \
+    echo "tzdata tzdata/Zones/Etc select UTC" | debconf-set-selections && \
     apt-get update -q && \
     apt-get install -q -y --no-install-recommends \
         apt-transport-https \
