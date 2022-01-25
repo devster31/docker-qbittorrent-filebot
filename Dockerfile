@@ -22,7 +22,8 @@ ENV HOME="/config" \
     XDG_DATA_HOME="/config" \
     QBITTORRENT_VER="${QBITTORRENT_VER}" \
     FILEBOT_VER="${FILEBOT_VER}" \
-    S6_OVERLAY_VER="${S6_OVERLAY_VER}"
+    S6_OVERLAY_VER="${S6_OVERLAY_VER}" \
+    MEDIAINFO_REPO_VER="1.0-19"
 
 # add repo and install qbitorrent
 RUN DEBIAN_FRONTEND=noninteractive \
@@ -47,8 +48,8 @@ RUN DEBIAN_FRONTEND=noninteractive \
     && \
     echo "***** add mediainfo repositories ****" && \
     cd /tmp && \
-    curl -sSL -OJ https://mediaarea.net/repo/deb/repo-mediaarea_1.0-12_all.deb && \
-    dpkg -i repo-mediaarea_1.0-12_all.deb && \
+    curl -sSL -OJ "https://mediaarea.net/repo/deb/repo-mediaarea_${MEDIAINFO_REPO_VER}_all.deb" && \
+    dpkg -i "repo-mediaarea_${MEDIAINFO_REPO_VER}_all.deb" && \
     echo "***** install mediainfo ****" && \
     apt-get update -q && \
     apt-get install -q -y --no-install-recommends \
