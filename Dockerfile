@@ -88,12 +88,12 @@ RUN \
     echo "**** add s6 overlay ****" && \
     curl -sSL -o \
         /tmp/s6-overlay-noarch.tar.xz \
-            "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VER}/s6-overlay-noarch-${S6_OVERLAY_VER}.tar.xz" && \
+            "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VER}/s6-overlay-noarch.tar.xz" && \
     tar -xJpv -f \
         /tmp/s6-overlay-noarch.tar.xz -C / && \
     curl -sSL -o \
         /tmp/s6-overlay.tar.xz \
-            "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VER}/s6-overlay-${S6_OVERLAY_ARCH}-${S6_OVERLAY_VER}.tar.xz" && \
+            "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VER}/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz" && \
     tar -xJpv -f \
         /tmp/s6-overlay.tar.xz -C / && \
     echo "**** create abc user ****" && \
