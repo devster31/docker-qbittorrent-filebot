@@ -116,6 +116,7 @@ jobs:
       - name: Build and push Docker images
         uses: docker/build-push-action@v4.0.0
         with:
+          push: true
           build-args: |
             SHORT_TAG_VER=${{ steps.version_check.outputs.short_tag }}
             FULL_TAG_VER=${{ steps.version_check.outputs.full_tag }}
