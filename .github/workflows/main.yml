@@ -99,12 +99,12 @@ jobs:
             RUN_BUILD=no
           fi
 
-          echo "::set-output name=short_tag::${SHORT_TAG}"
-          echo "::set-output name=full_tag::${FULL_TAG}"
-          echo "::set-output name=s6_version::${CUR_S6_VER//v}"
-          echo "::set-output name=fb_version::${CUR_FB_VER}"
-          echo "::set-output name=qb_version::${CUR_QB_VER}"
-          echo "::set-output name=trigger::${RUN_BUILD}"
+          echo "{short_tag}={SHORT_TAG}" >> $GITHUB_OUTPUT
+          echo "{full_tag}={FULL_TAG}" >> $GITHUB_OUTPUT
+          echo "{s6_version}={CUR_S6_VER//v}" >> $GITHUB_OUTPUT
+          echo "{fb_version}={CUR_FB_VER}" >> $GITHUB_OUTPUT
+          echo "{qb_version}={CUR_QB_VER}" >> $GITHUB_OUTPUT
+          echo "{trigger}={RUN_BUILD}" >> $GITHUB_OUTPUT
         id: version_check
 
       - name: Docker Login
