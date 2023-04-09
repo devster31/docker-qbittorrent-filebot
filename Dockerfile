@@ -23,7 +23,8 @@ ENV HOME="/config" \
     QBITTORRENT_VER="${QBITTORRENT_VER}" \
     FILEBOT_VER="${FILEBOT_VER}" \
     S6_OVERLAY_VER="${S6_OVERLAY_VER}" \
-    MEDIAINFO_REPO_VER="1.0-21"
+    MEDIAINFO_REPO_VER="1.0-21" \
+    PATH="/command:$PATH"
 
 # add repo and install qbitorrent
 
