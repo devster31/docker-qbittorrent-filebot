@@ -10,13 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2.7.0
 
-      - name: Setup Docker
-        uses: docker-practice/actions-setup-docker@0.0.1
-        with:
-          docker_version: 19.03
-          docker_channel: stable
+      - name: Docker Setup Buildx
+        uses: docker/setup-buildx-action@v2.5.0
 
       - name: Version check
         shell: bash
@@ -110,18 +107,23 @@ jobs:
           echo "::set-output name=trigger::${RUN_BUILD}"
         id: version_check
 
-      - name: Build
-        if: success() && steps.version_check.outputs.trigger == 'yes'
-        run: |
-          echo ${{ secrets.docker_hub_password }} | docker login --username ${{ secrets.docker_hub_username }} --password-stdin
-          docker build . \
-            --build-arg SHORT_TAG_VER="${{ steps.version_check.outputs.short_tag }}" \
-            --build-arg FULL_TAG_VER="${{ steps.version_check.outputs.full_tag }}" \
-            --build-arg FILEBOT_VER="${{ steps.version_check.outputs.fb_version }}" \
-            --build-arg QBITTORRENT_VER="${{ steps.version_check.outputs.qb_version }}" \
-            --build-arg S6_OVERLAY_VER="${{ steps.version_check.outputs.s6_version }}" \
-            --tag devster31/qbittorrent-filebot:latest \
-            --tag devster31/qbittorrent-filebot:"${{ steps.version_check.outputs.short_tag }}" \
-            --tag devster31/qbittorrent-filebot:"${{ steps.version_check.outputs.full_tag }}"
-          docker push devster31/qbittorrent-filebot
+      - name: Docker Login
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{ secrets.docker_hub_username }}
+          password: ${{ secrets.docker_hub_password }}
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v4.0.0
+        with:
+          build-args: |
+            SHORT_TAG_VER=${{ steps.version_check.outputs.short_tag }}
+            FULL_TAG_VER=${{ steps.version_check.outputs.full_tag }}
+            FILEBOT_VER=${{ steps.version_check.outputs.fb_version }}
+            QBITTORRENT_VER=${{ steps.version_check.outputs.qb_version }}
+            S6_OVERLAY_VER=${{ steps.version_check.outputs.s6_version }}
+          tags: |
+            devster31/qbittorrent-filebot:latest
+            devster31/qbittorrent-filebot:${{ steps.version_check.outputs.short_tag }}
+            devster31/qbittorrent-filebot:${{ steps.version_check.outputs.full_tag }}
 ...
