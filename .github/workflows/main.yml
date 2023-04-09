@@ -115,6 +115,7 @@ jobs:
 
       - name: Build and push Docker images
         uses: docker/build-push-action@v4.0.0
+        if: success() && steps.version_check.outputs.trigger == 'yes'
         with:
           push: true
           build-args: |
