@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 if [[ "$(ls /var/run/s6/container_environment/ | xargs)" == *"FILE__"* ]]; then
   for FILENAME in /var/run/s6/container_environment/*; do

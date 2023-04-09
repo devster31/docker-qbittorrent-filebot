@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/command/with-contenv bash
 
 # Directories
 SCRIPTS_DIR="/config/custom-cont-init.d"
