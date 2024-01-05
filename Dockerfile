@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:jammy
 
 # version args
 ARG SHORT_TAG_VER

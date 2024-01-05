@@ -77,7 +77,7 @@ jobs:
             exit 1
           fi
 
-          QB_DEB_URL=http://ppa.launchpad.net/qbittorrent-team/qbittorrent-stable/ubuntu/dists/focal/main/binary-amd64/Packages.gz
+          QB_DEB_URL=http://ppa.launchpad.net/qbittorrent-team/qbittorrent-stable/ubuntu/dists/jammy/main/binary-amd64/Packages.gz
           QB_PKG=qbittorrent-nox
           RESP=$(curl -Ls -w "%{http_code}" -o /dev/null "${QB_DEB_URL}")
           if [ "${RESP}" == 200 ]; then
