@@ -34,7 +34,7 @@ jobs:
               --header "Accept: application/vnd.docker.distribution.manifest.v2+json" \
               --header "Authorization: Bearer $token" \
               "https://registry-1.docker.io/v2/$image/manifests/$tag" \
-              | jq -r '.config.digest'
+              | jq -r '.manifests[] | select(.platform.architecture == "amd64").digest'
           }
 
           function get_image_configuration() {
