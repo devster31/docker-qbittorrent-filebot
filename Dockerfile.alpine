@@ -1,0 +1,98 @@
+FROM alpine:3.19
+
+# version args
+ARG SHORT_TAG_VER
+ARG FULL_TAG_VER
+ARG QBITTORRENT_VER
+ARG FILEBOT_VER
+# version args for s6 overlay
+ARG S6_OVERLAY_VER
+ARG S6_OVERLAY_ARCH="x86_64"
+ARG VUETORRENT_VER
+
+LABEL org.opencontainers.image.version="${SHORT_TAG_VER}"
+LABEL org.opencontainers.image.tag.version="${FULL_TAG_VER}"
+LABEL org.opencontainers.image.qbittorrent.version="${QBITTORRENT_VER}"
+LABEL org.opencontainers.image.filebot.version="${FILEBOT_VER}"
+LABEL org.opencontainers.image.s6-overlay.version="${S6_OVERLAY_VER}"
+LABEL org.opencontainers.image.vuetorrent.version="${VUETORRENT_VER}"
+LABEL maintainer="devster31"
+
+# environment settings
+ENV HOME="/config" \
+    XDG_CONFIG_HOME="/config" \
+    XDG_DATA_HOME="/config" \
+    QBITTORRENT_VER="${QBITTORRENT_VER}" \
+    FILEBOT_VER="${FILEBOT_VER}" \
+    S6_OVERLAY_VER="${S6_OVERLAY_VER}" \
+    VUETORRENT_VER="${VUETORRENT_VER}" \
+    PATH="/command:$PATH"
+
+# add repo and install qbitorrent
+
+RUN \
+    apk add \
+        7zip \
+        chromaprint \
+        curl \
+        file \
+        gnupg \
+        httpie \
+        java-jna-native \
+        jq \
+        libmediainfo \
+        openjdk21-jre-headless \
+        qbittorrent-nox \
+        shadow \
+        xz \
+    && \
+    echo "**** install FileBot portable ****" && \
+      curl -sSL https://get.filebot.net/filebot/FileBot_5.1.2/FileBot_5.1.2-portable.tar.xz -o /tmp/filebot-portable.tar.xz && \
+      mkdir -p /app/filebot && \
+      tar x -v -C /app/filebot -f /tmp/filebot-portable.tar.xz && \
+      ln -s /app/filebot/filebot.sh /usr/local/bin/filebot \
+    && \
+    echo "**** cleanup ****" && \
+    apk cache clean && \
+    rm -rf \
+        /var/tmp/* \
+        /tmp/*
+
+RUN \
+    echo "**** add s6 overlay ****" && \
+    curl -sSL -o \
+        /tmp/s6-overlay-noarch.tar.xz \
+            "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VER}/s6-overlay-noarch.tar.xz" && \
+    tar x -v -f \
+        /tmp/s6-overlay-noarch.tar.xz -C / && \
+    curl -sSL -o \
+        /tmp/s6-overlay.tar.xz \
+            "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VER}/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz" && \
+    tar x -v -f \
+        /tmp/s6-overlay.tar.xz -C / && \
+    echo "**** add VueTorrent ****" && \
+    curl -sSL -o \
+        /tmp/vuetorrent.zip \
+            "https://github.com/WDaan/VueTorrent/releases/download/v${VUETORRENT_VER}/vuetorrent.zip" && \
+    unzip -d /app /tmp/vuetorrent.zip && \
+    echo "**** create abc user ****" && \
+    # add group users
+    groupmod -g 100 users && \
+    # add abc user without shell
+    useradd -u 911 -U -d /config -m -s /bin/false abc && \
+    # assign users group to abc user
+    usermod -G users abc && \
+    rm -rf \
+        /tmp/*
+
+ENV LANG C.UTF-8
+ENV FILEBOT_OPTS "-Dapplication.deployment=docker"
+
+# copy local files
+COPY root/ /
+
+# ports and volumes
+EXPOSE 6881 6881/udp 8080
+VOLUME /config
+
+ENTRYPOINT ["/init"]
