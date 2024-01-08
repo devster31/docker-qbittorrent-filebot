@@ -133,8 +133,8 @@ jobs:
           build-args: |
             SHORT_TAG_VER=${{ steps.version_check.outputs.short_tag }}
             FULL_TAG_VER=${{ steps.version_check.outputs.full_tag }}
-            FILEBOT_VER=${{ steps.version_check.outputs.fb_version }}
             QBITTORRENT_VER=${{ steps.version_check.outputs.qb_version }}
+            FILEBOT_VER=${{ steps.version_check.outputs.fb_version }}
             S6_OVERLAY_VER=${{ steps.version_check.outputs.s6_version }}
             VUETORRENT_VER=${{ steps.version_check.outputs.vt_version }}
           tags: |
