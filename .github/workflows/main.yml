@@ -9,6 +9,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - dockerfile: Dockerfile
+            mainTag: latest
+            prepend: ""
+          - dockerfile: Dockerfile.alpine
+            mainTag: alpine
+            prepend: alpine-
     steps:
       - uses: actions/checkout@v4.1.1
 
@@ -131,6 +140,8 @@ jobs:
         uses: docker/build-push-action@v5.1.0
         if: success() && steps.version_check.outputs.trigger == 'yes'
         with:
+          context: .
+          file: ./${{ matrix.dockerfile }}
           push: true
           build-args: |
             SHORT_TAG_VER=${{ steps.version_check.outputs.short_tag }}
@@ -140,7 +151,7 @@ jobs:
             S6_OVERLAY_VER=${{ steps.version_check.outputs.s6_version }}
             VUETORRENT_VER=${{ steps.version_check.outputs.vt_version }}
           tags: |
-            devster31/qbittorrent-filebot:latest
-            devster31/qbittorrent-filebot:${{ steps.version_check.outputs.short_tag }}
-            devster31/qbittorrent-filebot:${{ steps.version_check.outputs.full_tag }}
+            devster31/qbittorrent-filebot:${{ matrix.mainTag }}
+            devster31/qbittorrent-filebot:${{ matrix.prepend }}${{ steps.version_check.outputs.short_tag }}
+            devster31/qbittorrent-filebot:${{ matrix.prepend }}${{ steps.version_check.outputs.full_tag }}
 ...
