@@ -9,6 +9,7 @@ ARG FILEBOT_VER
 ARG S6_OVERLAY_VER
 ARG S6_OVERLAY_ARCH="x86_64"
 ARG VUETORRENT_VER
+ARG MEDIAINFO_REPO_VER="1.0-24"
 
 LABEL org.opencontainers.image.version="${SHORT_TAG_VER}"
 LABEL org.opencontainers.image.tag.version="${FULL_TAG_VER}"
@@ -25,7 +26,8 @@ ENV HOME="/config" \
     QBITTORRENT_VER="${QBITTORRENT_VER}" \
     FILEBOT_VER="${FILEBOT_VER}" \
     S6_OVERLAY_VER="${S6_OVERLAY_VER}" \
-    MEDIAINFO_REPO_VER="1.0-21" \
+    VUETORRENT_VER="${VUETORRENT_VER}" \
+    MEDIAINFO_REPO_VER="${MEDIAINFO_REPO_VER}" \
     PATH="/command:$PATH"
 
 # add repo and install qbitorrent
@@ -55,8 +57,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     && \
     echo "***** add mediainfo repositories ****" && \
     cd /tmp && \
-    curl -sSL -OJ "https://mediaarea.net/repo/deb/repo-mediaarea_${MEDIAINFO_REPO_VER}_all.deb" && \
-    dpkg -i "repo-mediaarea_${MEDIAINFO_REPO_VER}_all.deb" && \
+    curl -sSL -OJ "https://mediaarea.net/repo/deb/repo-mediaarea-snapshots_${MEDIAINFO_REPO_VER}_all.deb" && \
+    dpkg -i "repo-mediaarea-snapshots_${MEDIAINFO_REPO_VER}_all.deb" && \
     echo "***** install mediainfo ****" && \
     apt-get update -q && \
     apt-get install -q -y --no-install-recommends \
