@@ -43,7 +43,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
         curl \
         file \
         gnupg \
-        httpie \
         jq \
         libchromaprint-tools \
         libjna-jni \
