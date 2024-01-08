@@ -58,6 +58,7 @@ jobs:
           EXT_S6_VER=$(get_image_info | jq -r '.Labels."org.opencontainers.image.s6-overlay.version"')
           EXT_FB_VER=$(get_image_info | jq -r '.Labels."org.opencontainers.image.filebot.version"')
           EXT_QB_VER=$(get_image_info | jq -r '.Labels."org.opencontainers.image.qbittorrent.version"')
+          EXT_VT_VER=$(get_image_info | jq -r '.Labels."org.opencontainers.image.vuetorrent.version"')
 
           S6_URL=https://api.github.com/repos/just-containers/s6-overlay/releases/latest
           RESP=$(curl -Ls -w "%{http_code}" -o /dev/null "${S6_URL}")
@@ -65,6 +66,15 @@ jobs:
             CUR_S6_VER=$(curl -sS "${S6_URL}" | jq --raw-output '.tag_name')
           else
             echo "::error ::Unable to get the URL:${S6_URL}"
+            exit 1
+          fi
+
+          VT_URL=https://api.github.com/repos/WDaan/VueTorrent/releases/latest
+          RESP=$(curl -Ls -w "%{http_code}" -o /dev/null "${VT_URL}")
+          if [ "${RESP}" == 200 ]; then
+            CUR_VT_VER=$(curl -sS "${VT_URL}" | jq --raw-output '.tag_name')
+          else
+            echo "::error ::Unable to get the URL:${VT_URL}"
             exit 1
           fi
 
@@ -93,7 +103,8 @@ jobs:
 
           if [ "${CUR_QB_VER}" != "${EXT_QB_VER}" ] || \
              [ "${CUR_FB_VER}" != "${EXT_FB_VER}" ] || \
-             [ "${CUR_S6_VER//v}" != "${EXT_S6_VER}" ]; then
+             [ "${CUR_S6_VER//v}" != "${EXT_S6_VER}" ] || \
+             [ "${CUR_VT_VER//v}" != "${EXT_VT_VER}" ]; then
             RUN_BUILD=yes
           else
             RUN_BUILD=no
@@ -102,6 +113,7 @@ jobs:
           echo "short_tag=${SHORT_TAG}" >> "$GITHUB_OUTPUT"
           echo "full_tag=${FULL_TAG}" >> "$GITHUB_OUTPUT"
           echo "s6_version=${CUR_S6_VER//v}" >> "$GITHUB_OUTPUT"
+          echo "vt_version=${CUR_VT_VER//v}" >> "$GITHUB_OUTPUT"
           echo "fb_version=${CUR_FB_VER}" >> "$GITHUB_OUTPUT"
           echo "qb_version=${CUR_QB_VER}" >> "$GITHUB_OUTPUT"
           echo "trigger=${RUN_BUILD}" >> "$GITHUB_OUTPUT"
@@ -124,6 +136,7 @@ jobs:
             FILEBOT_VER=${{ steps.version_check.outputs.fb_version }}
             QBITTORRENT_VER=${{ steps.version_check.outputs.qb_version }}
             S6_OVERLAY_VER=${{ steps.version_check.outputs.s6_version }}
+            VUETORRENT_VER=${{ steps.version_check.outputs.vt_version }}
           tags: |
             devster31/qbittorrent-filebot:latest
             devster31/qbittorrent-filebot:${{ steps.version_check.outputs.short_tag }}

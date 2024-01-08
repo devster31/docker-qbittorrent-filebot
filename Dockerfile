@@ -8,12 +8,14 @@ ARG FILEBOT_VER
 # version args for s6 overlay
 ARG S6_OVERLAY_VER
 ARG S6_OVERLAY_ARCH="x86_64"
+ARG VUETORRENT_VER
 
 LABEL org.opencontainers.image.version="${SHORT_TAG_VER}"
 LABEL org.opencontainers.image.tag.version="${FULL_TAG_VER}"
 LABEL org.opencontainers.image.qbittorrent.version="${QBITTORRENT_VER}"
 LABEL org.opencontainers.image.filebot.version="${FILEBOT_VER}"
 LABEL org.opencontainers.image.s6-overlay.version="${S6_OVERLAY_VER}"
+LABEL org.opencontainers.image.vuetorrent.version="${VUETORRENT_VER}"
 LABEL maintainer="devster31"
 
 # environment settings
@@ -97,6 +99,11 @@ RUN \
             "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VER}/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz" && \
     tar -xJpv -f \
         /tmp/s6-overlay.tar.xz -C / && \
+    echo "**** add VueTorrent ****" && \
+    curl -sSL -o \
+        /tmp/vuetorrent.zip \
+            "https://github.com/WDaan/VueTorrent/releases/download/v${VUETORRENT_VER}/vuetorrent.zip" && \
+    unzip -d /app /tmp/vuetorrent.zip && \
     echo "**** create abc user ****" && \
     # add group users
     groupmod -g 100 users && \
