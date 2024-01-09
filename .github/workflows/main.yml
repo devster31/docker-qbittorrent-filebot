@@ -26,6 +26,8 @@ jobs:
 
       - name: Version check
         shell: bash
+        env:
+          MAINTAG: ${{ matrix.mainTag }}
         run: |
           # start of script
           function get_token() {
@@ -36,38 +38,41 @@ jobs:
           }
 
           function get_digest() {
-            local image=$1
-            local tag=$2
-            local token=$3
+            local image="${1}"
+            local tag="${2}"
+            local token="${3}"
             curl -sSL \
               --header "Accept: application/vnd.docker.distribution.manifest.v2+json" \
               --header "Authorization: Bearer $token" \
-              "https://registry-1.docker.io/v2/$image/manifests/$tag" \
-              | jq -r '.manifests[] | select(.platform.architecture == "amd64").digest'
+              "https://registry-1.docker.io/v2/${image}/manifests/${tag}" \
+              | jq -n 'try (inputs | ((.manifests[] | select(.platform.architecture == "amd64").digest) // .config.digest))'
           }
 
           function get_image_configuration() {
-            local image=$1
-            local token=$2
-            local digest=$3
+            local image="${1}"
+            local token="${2}"
+            local digest="${3}"
             curl -sSL --header "Authorization: Bearer $token" \
-              "https://registry-1.docker.io/v2/$image/blobs/$digest" \
-              | jq -r '.container_config'
+              "https://registry-1.docker.io/v2/${image}/blobs/${digest}" \
+              | jq -n 'try (inputs | .config // .container_config )'
           }
 
           function get_image_info {
+            local tag
+            tag="${1:-latest}"
             local image="devster31/qbittorrent-filebot"
             local token
             token=$(get_token $image)
             local digest
-            digest=$(get_digest "${image}" "${tag:-latest}" "${token}")
+            digest=$(get_digest "${image}" "${tag}" "${token}")
             get_image_configuration "${image}" "${token}" "${digest}"
           }
 
-          EXT_S6_VER=$(get_image_info | jq -r '.Labels."org.opencontainers.image.s6-overlay.version"')
-          EXT_FB_VER=$(get_image_info | jq -r '.Labels."org.opencontainers.image.filebot.version"')
-          EXT_QB_VER=$(get_image_info | jq -r '.Labels."org.opencontainers.image.qbittorrent.version"')
-          EXT_VT_VER=$(get_image_info | jq -r '.Labels."org.opencontainers.image.vuetorrent.version"')
+          image_info=$(get_image_info "${MAINTAG}")
+          EXT_S6_VER=$(echo "${image_info}" | jq -r 'try (.Labels."org.opencontainers.image.s6-overlay.version")')
+          EXT_FB_VER=$(echo "${image_info}" | jq -r 'try (.Labels."org.opencontainers.image.filebot.version")')
+          EXT_QB_VER=$(echo "${image_info}" | jq -r 'try (.Labels."org.opencontainers.image.qbittorrent.version")')
+          EXT_VT_VER=$(echo "${image_info}" | jq -r 'try (.Labels."org.opencontainers.image.vuetorrent.version")')
 
           S6_URL=https://api.github.com/repos/just-containers/s6-overlay/releases/latest
           RESP=$(curl -Ls -w "%{http_code}" -o /dev/null "${S6_URL}")
