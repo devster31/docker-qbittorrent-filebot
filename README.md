@@ -107,3 +107,10 @@ If you have no webui , check the file /config/qBittorrent/qBittorrent.conf and e
 WebUI\Address=*
 WebUI\ServerDomains=*
 ```
+
+### VueTorrent
+
+The image now includes an alternative Web UI: VueTorrent. To use it adjust WebUI settings like below.
+
+![image](https://github.com/devster31/docker-qbittorrent-filebot/assets/1912062/8d9c9d8a-d6b6-4da9-8483-1dfbb7fca8b6)
+
