@@ -24,51 +24,16 @@ jobs:
       - name: Docker Setup Buildx
         uses: docker/setup-buildx-action@v3.0.0
 
+      - name: Setup the Regctl utility
+        uses: vookimedlo/setup-regctl@v1.0.1
+
       - name: Version check
         shell: bash
         env:
           MAINTAG: ${{ matrix.mainTag }}
         run: |
           # start of script
-          function get_token() {
-            local image=$1
-            curl -sS \
-              "https://auth.docker.io/token?scope=repository:$image:pull&service=registry.docker.io" \
-              | jq -r '.token'
-          }
-
-          function get_digest() {
-            local image="${1}"
-            local tag="${2}"
-            local token="${3}"
-            curl -sSL \
-              --header "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-              --header "Authorization: Bearer $token" \
-              "https://registry-1.docker.io/v2/${image}/manifests/${tag}" \
-              | jq -n 'try (inputs | ((.manifests[] | select(.platform.architecture == "amd64").digest) // .config.digest))'
-          }
-
-          function get_image_configuration() {
-            local image="${1}"
-            local token="${2}"
-            local digest="${3}"
-            curl -sSL --header "Authorization: Bearer $token" \
-              "https://registry-1.docker.io/v2/${image}/blobs/${digest}" \
-              | jq -n 'try (inputs | .config // .container_config )'
-          }
-
-          function get_image_info {
-            local tag
-            tag="${1:-latest}"
-            local image="devster31/qbittorrent-filebot"
-            local token
-            token=$(get_token $image)
-            local digest
-            digest=$(get_digest "${image}" "${tag}" "${token}")
-            get_image_configuration "${image}" "${token}" "${digest}"
-          }
-
-          image_info=$(get_image_info "${MAINTAG}")
+          image_info=$(regctl image config devster31/qbittorrent-filebot:"${MAINTAG}" --format "{{ jsonPretty .Config }}")
           EXT_S6_VER=$(echo "${image_info}" | jq -r 'try (.Labels."org.opencontainers.image.s6-overlay.version")')
           EXT_FB_VER=$(echo "${image_info}" | jq -r 'try (.Labels."org.opencontainers.image.filebot.version")')
           EXT_QB_VER=$(echo "${image_info}" | jq -r 'try (.Labels."org.opencontainers.image.qbittorrent.version")')
